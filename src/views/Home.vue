@@ -236,9 +236,9 @@ export default {
      appearance: none;
      border: none;
      border-radius: 5px;
-     padding: 5px;
+     padding: 5px 12px 5px 12px;
      font-family: 'Dosis', sans-serif;
-     color: #18189e;
+     color: black;
 
      &:hover{
        background: cornflowerblue;
