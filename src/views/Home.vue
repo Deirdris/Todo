@@ -6,15 +6,13 @@
 
     <div id="input">
       <input type="text" id="todo" v-model.trim="newTodo">
-      <button id="add" v-on:click="add"><i class="far fa-plus-square"></i></button>
+      <span id="add" v-on:click="add"><i class="fas fa-pencil-alt"></i></span>
     </div>
 
-    <div id="todos" >
-      <div v-for="(todo,i) in todosFilter" :key="i" style="text-align: center; padding-bottom: 30px;">
+   <div style="display: flex; flex-grow: 1;">
 
-        <span style="padding-right: 20px;">
-         <input type="checkbox" id="done" v-model="todo.completed">
-        </span>
+    <div id="todos" >
+      <div v-for="(todo,i) in todosFilter" :key="i" class="line">
 
        <span v-if="!todo.editing" class="todo-item-label" @dblclick="editTodo(todo)" :class="{completed : todo.completed}">
        {{todo.title}}
@@ -22,16 +20,26 @@
 
        <input v-else class="todo-item-edit" type="text" v-model="todo.title" @blur="doneEditing(todo)" @keyup.enter="doneEditing(todo)" @keyup.esc="cancelEditing(todo)">
 
-         <button id="remove" v-on:click="removeTodo(i)"><i class="fas fa-times"></i></button>
+        <span class="check" v-on:click="todoDone(todo)">
+          <i class="fas fa-check"></i>
+        </span>
+
+        <span class="trash" v-on:click="removeTodo(i)">
+          <i class="fas fa-trash-alt"></i>
+        </span>
 
       </div>
     </div>
+
+
+   </div>
 
     <div style="display: flex; align-items: center; justify-content: center">
 
       <div class="extras">
 
-        <label><input type="checkbox" :checked="!allDone" @change="checkAll">Check all</label>
+        <label><span class="checkedAll" @click="checkAll()"><i class="fas fa-dumpster" style="padding-right: 8px;"></i></span>Check all</label>
+<!--        <label><input type="checkbox" :checked="!allDone" @change="checkAll">Check all</label>-->
         <span>{{remaining}} items left</span>
 
       </div>
@@ -103,7 +111,10 @@ export default {
       todo.editing = false;
     },
     checkAll(){
-      this.todos.forEach(todo => todo.completed = event.target.checked)
+      this.todos.forEach(todo => todo.completed = !todo.completed)
+    },
+    todoDone(todo){
+      todo.completed = !todo.completed;
     }
 
 
@@ -132,19 +143,18 @@ export default {
 <style lang="scss">
 
  .home{
-
  }
 
  #name{
 
    display: flex;
    justify-content: center;
-   align-content: center;
+   align-items: center;
 
    h3{
      font-family: 'Dosis', sans-serif;
      font-size: 60px;
-     color: #18189e;
+     color: #cf5f1f;
      padding-top: 40px;
    }
  }
@@ -157,12 +167,10 @@ export default {
     input{
       border-style: none;
       padding: 25px;
-      font-size: 20px;
+      font-size: 25px;
       width: 20%;
       font-family: 'Dosis', sans-serif;
-      border-radius: 40px;
-      color: #18189e;
-
+      color: black;
       &:focus{
         outline: none;
       }
@@ -172,9 +180,19 @@ export default {
      border: none;
      background: none;
      font-size: 50px;
-     color: #18189e;
+     color: black;
      cursor: pointer;
-     padding-left: 25px;
+     padding-right: 10px;
+     padding-left: 10px;
+     background: #cf5f1f;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     &:hover{
+       background: darken(#cf5f1f, 20%);
+     }
+
      &:focus{
        outline: none;
      }
@@ -183,31 +201,51 @@ export default {
  
  #todos{
    font-family: 'Dosis', sans-serif;
-   color: #18189e;
+   color: black;
    font-size: 30px;
-   padding-top: 20px;
-   font-weight: bold;
-   max-width: 20%;
+   padding-top: 30px;
+   //display: flex;
+   //flex-grow: 1;
+
    margin: 0 auto;
-   #remove{
-       cursor: pointer;
-       font-size: 20px;
-       border: none;
-       background: none;
-       color: #18189e;
-       &:focus{
-         outline: none;
-       }
+
+   .line{
+     padding-bottom: 30px;
+   }
+
+   .todo-item-label{
+     background: whitesmoke;
+     padding: 8px;
+   }
+
+   .check{
+     background: limegreen;
+     padding: 8px;
+     cursor: pointer;
+
+     &:hover{
+       background: darken(limegreen, 20%);
+     }
+   }
+
+   .trash{
+     background: red;
+     padding: 8px 10px 8px 10px;
+     cursor: pointer;
+
+     &:hover{
+       background: darken(red, 20%);
+     }
    }
  }
 
  .todo-item-edit{
    border-style: none;
-   padding: 25px;
-   font-size: 20px;
+   padding: 8px;
+   font-size: 30px;
+   margin-right: 15px;
    font-family: 'Dosis', sans-serif;
-   border-radius: 40px;
-   color: #18189e;
+   color: dimgrey;
    &:focus{
      outline: none;
    }
@@ -218,16 +256,25 @@ export default {
    color: dimgray;
  }
 
+ .checkedAll{
+   cursor: pointer;
+   color:black;
+
+   &:hover{
+     color: darkred;
+   }
+
+ }
+
  .extras{
    width: 30%;
    display: flex;
    align-items: center;
    justify-content: space-between;
    font-size: 20px;
-   border-top: 3px solid darkblue;
-   padding-top: 20px;
+   border-top: 3px solid #cf5f1f;
    margin-bottom: 20px;
-   color: #18189e;
+   color: black;
    font-family: 'Dosis', sans-serif;
 
    button{
@@ -235,13 +282,13 @@ export default {
      background-color: whitesmoke;
      appearance: none;
      border: none;
-     border-radius: 5px;
-     padding: 5px 12px 5px 12px;
+     padding: 5px 15px 5px 15px;
+     margin-top: 10px;
      font-family: 'Dosis', sans-serif;
      color: black;
 
      &:hover{
-       background: cornflowerblue;
+       background: lighten(limegreen, 20%);
      }
      &:focus{
        outline: none;
@@ -249,7 +296,7 @@ export default {
    }
 
    .active{
-     background: darken(cornflowerblue,20%);
+     background: limegreen;
    }
  }
 
