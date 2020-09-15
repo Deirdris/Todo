@@ -9,16 +9,11 @@
                 <span id="add" v-on:click="add"><i class="fas fa-pencil-alt"></i></span>
             </div>
             <div id="todos">
-                <div v-for="(todo,i) in todosFilter" :key="i" class="line">
-                   <span v-if="!todo.editing" class="todo-item-label" @dblclick="editTodo(todo)"
-                         :class="{completed : todo.completed}">
-                   {{ todo.title }}
-                   </span>
-                    <input v-else class="todo-item-edit" type="text" v-model="todo.title" @blur="doneEditing(todo)"
-                           @keyup.enter="doneEditing(todo)" @keyup.esc="cancelEditing(todo)">
-                    <span class="check" v-on:click="todoDone(todo)"><i class="fas fa-check"></i></span>
-                    <span class="trash" v-on:click="removeTodo(i)"><i class="fas fa-trash-alt"></i></span>
-                </div>
+                <Todo v-for="(todo,i) in todosFilter" :key="i"
+                      v-model='todo.title' :todo='todo'
+                      @done='todo.completed = !todo.completed'
+                      @remove='todos.splice(i, 1)'>
+                </Todo>
             </div>
             <div class='status'>
                 <div class="extras">
@@ -39,26 +34,22 @@
 </template>
 
 <script>
+    import Todo from '@/components/Todo';
 
     export default {
         name: 'Home',
-        components: {},
+        components: { Todo },
         data(){
             return {
-                newTodo: '',
-                beforeEdit: '',
                 activeFilter: 'all',
+                beforeEdit: '',
                 filters: ['all', 'active', 'completed'],
+                newTodo: '',
                 todos: []
-
             }
         },
 
         methods: {
-            capitalize(text){
-                return text[0].toUpperCase() + text.slice(1);
-            },
-
             add(){
                 if(this.newTodo.length === 0){
                     return
@@ -72,39 +63,25 @@
 
                 this.newTodo = ''
             },
-            removeTodo(i){
-                this.todos.splice(i, 1)
+
+            capitalize(text){
+                return text[0].toUpperCase() + text.slice(1);
             },
-            editTodo(todo){
-                this.beforeEdit = todo.title;
-                todo.editing = true;
-            },
-            doneEditing(todo){
-                if(todo.title.length === 0){
-                    todo.title = this.beforeEdit;
-                }
-                todo.editing = false;
-            },
-            cancelEditing(todo){
-                todo.title = this.beforeEdit;
-                todo.editing = false;
-            },
+
             checkAll(){
                 this.todos.forEach(todo => todo.completed = !todo.completed)
             },
-            todoDone(todo){
-                todo.completed = !todo.completed;
-            }
-
-
         },
+
         computed: {
-            remaining(){
-                return this.todos.filter(todo => !todo.completed).length;
-            },
             allDone(){
                 return this.remaining !== 0;
             },
+
+            remaining(){
+                return this.todos.filter(todo => !todo.completed).length;
+            },
+
             todosFilter(){
                 if(this.activeFilter === 'all'){
                     return this.todos;
@@ -122,12 +99,10 @@
 </script>
 
 <style lang="scss">
-
     .home {
     }
 
     #name {
-
         display: flex;
         justify-content: center;
         align-items: center;
@@ -188,59 +163,6 @@
         color: black;
         font-size: 30px;
         padding: 16px 0;
-
-        .line {
-            //padding-bottom: 30px;
-            display: flex;
-
-            &:not(:last-child) {
-                margin-bottom: 10px;
-            }
-        }
-
-        .todo-item-label {
-            background: whitesmoke;
-            padding: 8px 10px;
-            flex-grow: 1;
-        }
-
-        .check {
-            background: limegreen;
-            padding: 8px;
-            cursor: pointer;
-
-            &:hover {
-                background: darken(limegreen, 20%);
-            }
-        }
-
-        .trash {
-            background: red;
-            padding: 8px 10px 8px 10px;
-            cursor: pointer;
-
-            &:hover {
-                background: darken(red, 20%);
-            }
-        }
-    }
-
-    .todo-item-edit {
-        border-style: none;
-        padding: 8px;
-        font-size: 30px;
-        margin-right: 15px;
-        font-family: 'Dosis', sans-serif;
-        color: dimgrey;
-
-        &:focus {
-            outline: none;
-        }
-    }
-
-    .completed {
-        text-decoration: line-through;
-        color: dimgray;
     }
 
     .checked-all {
