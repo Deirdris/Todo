@@ -12,7 +12,7 @@
                 <Todo v-for="(todo) in todosFilter" :key="todo.id"
                       v-model='todo.title' :todo='todo'
                       @done='todo.completed = !todo.completed'
-                      @remove='remove(todo)'>
+                      @remove='remove(todo.id)'>
                 </Todo>
             </div>
             <div class='status'>
@@ -73,11 +73,9 @@
             checkAll(){
                 this.todos.forEach(todo => todo.completed = !todo.completed)
             },
-            remove(todo){
-                for(let i = 0; i < this.todos.length; i++){
-                    if(todo.id === this.todos[i].id)
-                        this.todos.splice(i,1);
-                }
+            remove(id){
+
+                this.todos = this.todos.filter(todo => todo.id !== id);
             }
         },
 
