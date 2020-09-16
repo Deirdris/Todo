@@ -9,10 +9,10 @@
                 <span id="add" v-on:click="add"><i class="fas fa-pencil-alt"></i></span>
             </div>
             <div id="todos">
-                <Todo v-for="(todo,i) in todosFilter" :key="i"
+                <Todo v-for="(todo) in todosFilter" :key="todo.id"
                       v-model='todo.title' :todo='todo'
                       @done='todo.completed = !todo.completed'
-                      @remove='todos.splice(i, 1)'>
+                      @remove='remove(todo)'>
                 </Todo>
             </div>
             <div class='status'>
@@ -45,6 +45,7 @@
                 beforeEdit: '',
                 filters: ['all', 'active', 'completed'],
                 newTodo: '',
+                id: 0,
                 todos: []
             }
         },
@@ -58,7 +59,8 @@
                 this.todos.push({
                     title: this.newTodo,
                     completed: false,
-                    editing: false
+                    editing: false,
+                    id: this.id++
                 })
 
                 this.newTodo = ''
@@ -71,13 +73,15 @@
             checkAll(){
                 this.todos.forEach(todo => todo.completed = !todo.completed)
             },
+            remove(todo){
+                for(let i = 0; i < this.todos.length; i++){
+                    if(todo.id === this.todos[i].id)
+                        this.todos.splice(i,1);
+                }
+            }
         },
 
         computed: {
-            allDone(){
-                return this.remaining !== 0;
-            },
-
             remaining(){
                 return this.todos.filter(todo => !todo.completed).length;
             },
